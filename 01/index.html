@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>jsで日時の表示</title>
+<style>
+body,h1,p {
+  margin: 0;
+  padding: 0;
+}
+#wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  text-align: center;
+}
+header {
+  padding: 20px 0;
+  background: rgba(255,0,0,0.1);
+}
+header h1 {
+  font-size: 20px;
+}
+main {
+  height: 100%;
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+}
+#result {
+  padding: 20px;
+  margin-bottom: 30px;
+}
+#result p {
+  padding: 10px 0;
+  margin-top: 20px;
+  background: rgba(0,200,0,0.1);
+}
+footer {
+  font-size: 12px;
+  padding: 10px 0;
+  background: rgba(0,100,200,0.1);
+}
+</style>
+</head>
+<body>
+<div id="wrapper">
+  <header>
+    <h1>今の日付/時間</h1>
+  </header>
+  <main role="main">
+    <div id="result">ここ↓↓↓に結果を表示します。</div>
+    <button id="btn">更新</button>
+  </main>
+  <footer>
+    copyright @ak130426.
+  </footer>
+</div>
+<script src="js/main.js"></script>
+</body>
+</html>
