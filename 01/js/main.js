@@ -14,7 +14,7 @@ btn.addEventListener('click', () => {
   const minute = today.getMinutes();
   const second = today.getSeconds();
 
-  child.innerHTML = '今は'+month+'月'+date+'日'+hours+'時'+minute+'分'+second+'秒です。';
+  child.innerHTML = `今は${month}月${date}日、${hours}時${minute}分${second}秒です。`;
   result.appendChild(child);
 
 });
