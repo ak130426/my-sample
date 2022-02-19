@@ -1,0 +1,13 @@
+body {
+  font-size: 14px;
+  line-height: 1.4;
+  font-weight: normal;
+}
+* {
+  box-sizing: border-box;
+}
+a {
+  font: inherit;
+  color: inherit;
+}
+
