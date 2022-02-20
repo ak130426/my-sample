@@ -1,29 +1,30 @@
 //ポップアップ設定
 const Popup = {
-  _init() {
+  _init(thisData) {
       const closeBtn   = document.querySelector('#modal-close') ? document.querySelector('#modal-close') : '';
       const popContent = document.querySelector('#popup') ? document.querySelector('#popup') : '';
+      const data = thisData;
 
       popContent.classList.add('is-show');
-      Popup._close(closeBtn, popContent);
+      Popup._close(closeBtn, popContent, data);
   },
-  _close(btn, popContent) {
+  _close(btn, popContent, data) {
       btn.addEventListener('click', () => {
           popContent.remove();
-          setStrage._setItem('targetUrl', true);
+          setStrage._setItem('targetUrl', data);
       });
   },
   _remove() {
       const popContent = document.querySelector('#popup') ? document.querySelector('#popup') : '';
-      popContent.remove();
+      if(popContent) popContent.remove();
   }
 };
 
 //localStrage設定
 const setStrage = {
   //データ格納
-  _setItem(k, v) {
-      localStorage.setItem(k, v);
+  _setItem(k, data) {
+    localStorage.setItem(k, JSON.stringify(data));
   },
   //データ取得
   _getItem(k) {
@@ -32,85 +33,79 @@ const setStrage = {
   //データ削除
   _clear(k) {
       localStorage.removeItem(k);
+  },
+  //日付に変換
+  _formatStr(str){
+    (str.slice(0, 13)).replace(/-/g,'/').replace(/T/g,'/');
+    return new Date(str);
   }
 };
 
 //ポップアップ表示
 const setPopup = {
   _init() {
-      //URL取得
       const thisUrl = location.pathname;
-      console.log(thisUrl);
-
       const today = new Date();
       console.log(today);
+      let thisData = {
+        target: false,  //true:見た,false:見ていない
+        expiry: today
+      }
 
-      //localStrage取得
       const strageItem = setStrage._getItem('targetUrl');
-      //トップページ判定
-      if(thisUrl == '/') {
-          Popup._init();
-          if(strageItem) {
-              Popup._remove();
-          }
-      } else {
-          Popup._remove();
-      }
-      if(!strageItem) {
-          if(thisUrl.match('/newlifesupportcp2022/') || thisUrl.match('/inquiry/') || thisUrl.match('/reservation/')) {
-              setStrage._setItem('targetUrl', true);
-          }
-      }
-      //データ削除
-      if(thisUrl.match('/site/')) {
-          setStrage._clear('targetUrl');
-      }
-      
+      const formatItem = JSON.parse(strageItem);
+
+    //トップページ
+    if(thisUrl == '/') {
+        //strageがある：日付を比較して次の日には再表示
+        if(strageItem) {
+            //訪問履歴あり
+            if(formatItem.target === true) {
+                Popup._remove();
+
+            } else {
+                const thisDayTime = new Date();
+                const expiryDay = setStrage._formatStr(formatItem.expiry);
+                //次の日以降なら表示する
+                if(thisDayTime > expiryDay) {
+                    if(thisDayTime.getDate() !== expiryDay.getDate()) {
+                        console.log(thisDayTime.getDate())
+                        console.log(expiryDay.getDate())
+                        thisData['expiry'] = thisDayTime;
+                        Popup._init(thisData);
+                    } else {
+                        // console.log('同じ日です')
+                    }
+                }
+            }
+        //strageがない：ポップアップ表示、日付を残す
+        } else {
+            thisData['expiry'] = new Date();
+            Popup._init(thisData);
+        }
+
+    //トップページ以外
+    } else {
+        //特定のページ：履歴・日付を残す
+        if(thisUrl.match(/newlifesupportcp2022/) || thisUrl.match(/02/)) {
+            data = {
+                target: true,
+                expiry: new Date()
+            }
+            setStrage._setItem('targetUrl', data);
+        } else {
+            Popup._remove();
+        }
+    }
+
+    //データ削除
+    if(thisUrl.match(/03/)) {
+        setStrage._clear('targetUrl');
+    }
+
   }
 }
 
 window.addEventListener('load', function() {
   const result = setPopup._init();
 });
-
-/*
-//localStrage設定
-const setStrage = {
-  //データ格納
-  _setItem(k, data) {
-      localStorage.setItem(k, JSON.stringify(data));
-  },
-  //データ取得
-  _getItem(k) {
-      let s = localStorage[k];
-      // if(s === undefined) {
-      //     return undefined;
-      // }
-      s = JSON.parse(s);
-      if(new Date(s.expire) > new Date()) {
-          return s.target;
-      } else {
-          localStorage.removeItem(k);
-          return undefined;
-      }
-  },
-  //データ削除
-  _clear(k, d) {
-      localStorage.removeItem(k);
-  }
-};
-
-let data = {
-  target: true,
-  expire: null
-}
-setStrage._setItem('test', data);
-
-------------------------
-data = {
-    target: true,
-    expire: '2050/02/01 00:00'
-}
-setStrage._setItem('test', data);
-
-*/
