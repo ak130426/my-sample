@@ -51,6 +51,7 @@ const setPopup = {
         target: false,  //true:見た,false:見ていない
         expiry: today
       }
+      console.log(thisData['expiry']);
 
       const strageItem = setStrage._getItem('targetUrl');
       const formatItem = JSON.parse(strageItem);
