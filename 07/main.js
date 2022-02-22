@@ -61,84 +61,79 @@ const classList = [
   },
 ];
 
-function init() {
-  const box      = document.querySelector('#box');
-  const selected = document.querySelector('#selected');
-  let str = '';
+const selectedList = [];
 
-  function showAll(list) {
-    str = '<table><thead><tr><th></th><th>科目名</th><th>科目区分</th><th>場所</th><th>ナンバリング</th><th>定員</th></tr></thead>'
-    list.forEach( item => {
-      id = item['id'];
-      title = item['title'];
-      subject = item['subject'];
-      place = item['place'];
-      number = item['number'];
-      people = item['people'];
-      console.log(item);
-      console.log(title);
-      console.log(subject);
-      str += '<tr>'
-              +'<td><button type="button" data-num="'+id+'">＋ 追加</button></td>'
-              +'<td>'+title+'</td>'
-              +'<td>'+subject+'</td>'
-              +'<td>'+place+'</td>'
-              +'<td>'+number+'</td>'
-              +'<td>'+people+'</td>'
+class displayItem {
+  constructor(div,list,head,btnType,item1,item2,item3,item4,item5,item6) {
+    this.div   = document.querySelector(div);
+    this.list  = list;
+    this.head  = head;
+    this.type  = btnType;
+    this.prop1 = item1;
+    this.prop2 = item2;
+    this.prop3 = item3;
+    this.prop4 = item4;
+    this.prop5 = item5;
+    this.prop6 = item6;
+    this.str = '';
+    this._init();
+  }
+  _init() {
+    if(this.head === true) {
+      this.str = '<table><thead><tr><th>&nbsp;</th><th>科目名</th><th>科目区分</th><th>場所</th><th>ナンバリング</th><th>定員</th></tr></thead>'
+    } else {
+      this.str = '<table>'
+    }
+    this.list.forEach( (item,i) => {
+      this.str += '<tr>'
+      if(this.type === 'add') {
+        this.str += '<td><button type="button" data-num="'+item[this.prop1]+'">＋ 追加</button></td>'
+      } else if(this.type === 'remove') {
+        this.str += '<td><button type="button" data-num="'+item[this.prop1]+'">－ 削除</button></td>'
+      }
+      this.str += '<td>'+item[this.prop2]+'</td>'
+              +'<td>'+item[this.prop3]+'</td>'
+              +'<td>'+item[this.prop4]+'</td>'
+              +'<td>'+item[this.prop5]+'</td>'
+              +'<td>'+item[this.prop6]+'</td>'
               +'</tr>';
     });
-    str += '</table>'
-
-    box.innerHTML = str;
-    // console.log(str);
+    this.str += '</table>'
+    this.div.innerHTML = this.str;
+    console.log(this.str);
   }
-  
+}
+
+function init() {
+
+  new displayItem('#box',classList,true,'add','id','title','subject','place','number','people');
+
   function filterItem(List, Id) {
-    return List.filter( list => {
-      return list['id'] == Id;
+    return List.filter( item => {
+      return item['id'] == Id;
     });
+  }
+
+  function selectItem(e){
+    const _this = this;
+    const thisId = _this.dataset.num;
+    result = filterItem(classList, thisId);
+    console.log(result);
+
+    new displayItem('#selected',result,false,'remove','id','title','subject','place','number','people');
+
   }
 
   function addList() {
     const btns = document.querySelectorAll('button');
     console.log(btns);
     btns.forEach( btn => {
-      btn.addEventListener('click', function(){
-        const thisId = btn.dataset.num;
-        result = filterItem(classList, thisId);
-        console.log(result);
-
-        function showSelected(list) {
-          str = '<div class="select-wrap"><table><tr>'
-          list.forEach( item => {
-            id = item['id'];
-            title = item['title'];
-            subject = item['subject'];
-            place = item['place'];
-            number = item['number'];
-            people = item['people'];
-            console.log(item);
-            console.log(title);
-            console.log(subject);
-            str += '<td><button type="button" data-num="'+id+'">＋ 削除</button></td>'
-                    +'<td>'+title+'</td>'
-                    +'<td>'+subject+'</td>'
-                    +'<td>'+place+'</td>'
-                    +'<td>'+number+'</td>'
-                    +'<td>'+people+'</td>'
-          });
-          str += '</tr></table></div>'
-          selected.innerHTML = str;
-          // console.log(str);
-        }
-        showSelected(result);
-
-      });
+      btn.addEventListener('click', selectItem.bind(btn));
     });
   }
 
   //
-  showAll(classList);
+  // showAll(classList);
   addList();
 
 
